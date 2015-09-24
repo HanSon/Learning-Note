@@ -47,7 +47,7 @@ location / { 规则F }
 
 访问根目录/， 比如http://localhost/ 将匹配规则A  
 
-访问 http://localhost/login 将匹配规则B，http://localhost/register 则匹配规则H  
+访问 http://localhost/login 将匹配规则B，http://localhost/register 则匹配规则F  
 
 访问 http://localhost/static/a.html 将匹配规则C  
 
