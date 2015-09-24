@@ -2,7 +2,7 @@
 
 * [语法规则](#语法规则)
 * [location例子](#location例子) 
-* [ReWrite语法](#ReWrite语法) 
+* [ReWrite 语法](#ReWrite语法) 
 * [防盗链](#防盗链)
 * [根据文件类型设置过期时间](#根据文件类型设置过期时间)
 * [禁止访问某个目录](#禁止访问某个目录)
@@ -69,25 +69,25 @@ location / { 规则H }
 直接匹配网站根，通过域名访问网站首页比较频繁，使用这个会加速处理，官网如是说。  
 这里是直接转发给后端应用服务器了，也可以是一个静态首页  
 第一个必选规则  
-location = / {  
+<pre><code>location = / {  
     &emsp;proxy_pass http://tomcat:8080/index  
-}  
+}</code></pre>
 第二个必选规则是处理静态文件请求，这是nginx作为http服务器的强项  
 有两种配置模式，目录匹配或后缀匹配,任选其一或搭配使用  
-location ^~ /static/ {  
+<pre><code>location ^~ /static/ {  
     &emsp;root /webroot/static/;  
-}  
-location ~* \.(gif|jpg|jpeg|png|css|js|ico)$ {  
+}  </code></pre>
+<pre><code>location ~* \.(gif|jpg|jpeg|png|css|js|ico)$ {  
     &emsp;root /webroot/res/;  
-}  
+} </code></pre> 
 第三个规则就是通用规则，用来转发动态请求到后端应用服务器  
 非静态文件请求就默认是动态请求，自己根据实际把握  
 毕竟目前的一些框架的流行，带.php,.jsp后缀的情况很少了  
-location / {  
+<pre><code>location / {  
     &emsp;proxy_pass http://tomcat:8080/  
-}
+}</code></pre> 
 
-## ReWrite语法
+##ReWrite语法
 
 last – 基本上都用这个Flag。  
 break – 中止Rewirte，不在继续匹配  
@@ -120,43 +120,42 @@ $document_root：D:\nginx/html
 
 $request_filename：D:\nginx/html/test1/test2/test.php  
 
-server {  
+<pre><code>server {  
 
   &emsp;listen 80;  
-  
   &emsp;server_name start.igrow.cn;  
-  
   &emsp;index index.html index.php;  
   &emsp;root html;  
+  
   &emsp;if ($http_host !~ “^star\.igrow\.cn$&quot {  
     &emsp;&emsp;rewrite ^(.*) http://star.igrow.cn$1 redirect;  
   &emsp;}  
-}  
+}  </code></pre> 
 
 ## 防盗链
 
-location ~* \.(gif|jpg|swf)$ {  
+<pre><code>location ~* \.(gif|jpg|swf)$ {  
   &emsp;valid_referers none blocked start.igrow.cn sta.igrow.cn;  
   &emsp;if ($invalid_referer) {  
     &emsp;&emsp;rewrite ^/ http://$host/logo.png;  
   &emsp;}  
-}  
+}  </code></pre> 
 
 ## 根据文件类型设置过期时间
 
-location ~* \.(js|css|jpg|jpeg|gif|png|swf)$ {  
+<pre><code>location ~* \.(js|css|jpg|jpeg|gif|png|swf)$ {  
   &emsp;if (-f $request_filename) {  
     &emsp;&emsp;expires 1h;  
     &emsp;&emsp;break;  
  &emsp; }  
-}  
+}  </code></pre> 
 
 ## 禁止访问某个目录  
 
-location ~* \.(txt|doc)${  
+<pre><code>location ~* \.(txt|doc)${  
   &emsp;root /data/www/wwwroot/linuxtone/test;  
   &emsp;deny all;  
-}  
+}  </code></pre> 
 
 ## 一些可用的全局变量:
 
