@@ -1,6 +1,14 @@
 # Nginx 配置
 
-#语法规则
+* [语法规则](#语法规则)
+* [location例子](#location例子) 
+* [ReWrite语法](#ReWrite语法) 
+* [防盗链](#防盗链)
+* [根据文件类型设置过期时间](#根据文件类型设置过期时间)
+* [禁止访问某个目录](#禁止访问某个目录)
+* [一些可用的全局变量](#一些可用的全局变量)
+
+##语法规则
 
 location [=|~|~*|^~] /uri/ { … }
 
@@ -20,52 +28,34 @@ location [=|~|~*|^~] /uri/ { … }
 
 首先匹配 =，其次匹配^~, 其次是按文件中顺序的正则匹配，最后是交给 /通用匹配。当有匹配成功时候，停止匹配，按当前匹配规则处理请求。  
 
-# location例子  
+## location例子  
 
 例子，有如下匹配规则：  
 
-location = / {  
+location = / {   规则A  }  
 
-   规则A  
-   
-}  
+location = /login {   规则B }  
 
-location = /login {  
+location ^~ /static/ {   规则C   }  
 
-   规则B  
-   
-}  
+location ~ \.(gif|jpg|png|js|css)$ { 规则D }
 
-location ^~ /static/ {  
+location ~* \.png$ {  规则E  }
 
-   规则C  
-   
-}  
+location !~ \.xhtml$ { 规则F }
 
-location ~ \.(gif|jpg|png|js|css)$ {
-   规则D
-}
-location ~* \.png$ {
-   #规则E
-}
-location !~ \.xhtml$ {
-   规则F
-}
-location !~* \.xhtml$ {
-   规则G
-}
-location / {
-   规则H
-}
+location !~* \.xhtml$ { 规则G }
 
-那么产生的效果如下：
-访问根目录/， 比如http://localhost/ 将匹配规则A
-访问 http://localhost/login 将匹配规则B，http://localhost/register 则匹配规则H
-访问 http://localhost/static/a.html 将匹配规则C
-访问 http://localhost/a.gif, http://localhost/b.jpg 将匹配规则D和规则E，但是规则D顺序优先，规则E不起作用，而 http://localhost/static/c.png 则优先匹配到规则C
-访问 http://localhost/a.PNG 则匹配规则E，而不会匹配规则D，因为规则E不区分大小写。
-访问 http://localhost/a.xhtml 不会匹配规则F和规则G，http://localhost/a.XHTML不会匹配规则G，因为不区分大小写。规则F，规则G属于排除法，符合匹配规则但是不会匹配到，所以想想看实际应用中哪里会用到。
-访问 http://localhost/category/id/1111 则最终匹配到规则H，因为以上规则都不匹配，这个时候应该是nginx转发请求给后端应用服务器，比如FastCGI（php），tomcat（jsp），nginx作为方向代理服务器存在。
+location / { 规则H }
+
+那么产生的效果如下：  
+访问根目录/， 比如http://localhost/ 将匹配规则A  
+访问 http://localhost/login 将匹配规则B，http://localhost/register 则匹配规则H  
+访问 http://localhost/static/a.html 将匹配规则C  
+访问 http://localhost/a.gif, http://localhost/b.jpg 将匹配规则D和规则E，但是规则D顺序优先，规则E不起作用，而 http://localhost/static/c.png 则优先匹配到规则C  
+访问 http://localhost/a.PNG 则匹配规则E，而不会匹配规则D，因为规则E不区分大小写。  
+访问 http://localhost/a.xhtml 不会匹配规则F和规则G，http://localhost/a.XHTML不会匹配规则G，因为不区分大小写。规则F，规则G属于排除法，符合匹配规则但是不会匹配到，所以想想看实际应用中哪里会用到。  
+访问 http://localhost/category/id/1111 则最终匹配到规则H，因为以上规则都不匹配，这个时候应该是nginx转发请求给后端应用服务器，比如FastCGI（php），tomcat（jsp），nginx作为方向代理服务器存在。  
 
 所以实际使用中，个人觉得至少有三个匹配规则定义，如下：
 
@@ -90,7 +80,7 @@ location / {
     proxy_pass http://tomcat:8080/
 }
 
-# ReWrite语法
+## ReWrite语法
 last – 基本上都用这个Flag。
 break – 中止Rewirte，不在继续匹配
 redirect – 返回临时重定向的HTTP状态302
@@ -109,8 +99,6 @@ $document_uri：/test1/test2/test.php
 $document_root：D:\nginx/html
 $request_filename：D:\nginx/html/test1/test2/test.php
 
-# Redirect语法
-
 server {
   listen 80;
   server_name start.igrow.cn;
@@ -121,7 +109,7 @@ server {
   }
 }
 
-# 防盗链
+## 防盗链
 
 location ~* \.(gif|jpg|swf)$ {
   valid_referers none blocked start.igrow.cn sta.igrow.cn;
@@ -130,7 +118,7 @@ location ~* \.(gif|jpg|swf)$ {
   }
 }
 
-# 根据文件类型设置过期时间
+## 根据文件类型设置过期时间
 
 location ~* \.(js|css|jpg|jpeg|gif|png|swf)$ {
   if (-f $request_filename) {
@@ -138,14 +126,14 @@ location ~* \.(js|css|jpg|jpeg|gif|png|swf)$ {
     break;
   }
 }
-# 禁止访问某个目录
+## 禁止访问某个目录
 
 location ~* \.(txt|doc)${
   root /data/www/wwwroot/linuxtone/test;
   deny all;
 }
 
-# 一些可用的全局变量:
+## 一些可用的全局变量:
 
 $args
 $content_length
