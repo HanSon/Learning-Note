@@ -115,15 +115,15 @@ $request_filename：D:\nginx/html/test1/test2/test.php
 
 server {  
 
-  listen 80;  
+  &emsp;listen 80;  
   
-  server_name start.igrow.cn;  
+  &emsp;server_name start.igrow.cn;  
   
-  index index.html index.php;  
-  root html;  
-  if ($http_host !~ “^star\.igrow\.cn$&quot {  
-    rewrite ^(.*) http://star.igrow.cn$1 redirect;  
-  }  
+  &emsp;index index.html index.php;  
+  &emsp;root html;  
+  &emsp;if ($http_host !~ “^star\.igrow\.cn$&quot {  
+    &emsp;rewrite ^(.*) http://star.igrow.cn$1 redirect;  
+  &emsp;}  
 }  
 
 ## 防盗链
