@@ -59,102 +59,120 @@ location / { 规则H }
 
 所以实际使用中，个人觉得至少有三个匹配规则定义，如下：
 
-直接匹配网站根，通过域名访问网站首页比较频繁，使用这个会加速处理，官网如是说。
-这里是直接转发给后端应用服务器了，也可以是一个静态首页
-第一个必选规则
-location = / {
-    proxy_pass http://tomcat:8080/index
-}
-第二个必选规则是处理静态文件请求，这是nginx作为http服务器的强项
-有两种配置模式，目录匹配或后缀匹配,任选其一或搭配使用
-location ^~ /static/ {
-    root /webroot/static/;
-}
-location ~* \.(gif|jpg|jpeg|png|css|js|ico)$ {
-    root /webroot/res/;
-}
-第三个规则就是通用规则，用来转发动态请求到后端应用服务器
-非静态文件请求就默认是动态请求，自己根据实际把握
-毕竟目前的一些框架的流行，带.php,.jsp后缀的情况很少了
-location / {
-    proxy_pass http://tomcat:8080/
+直接匹配网站根，通过域名访问网站首页比较频繁，使用这个会加速处理，官网如是说。  
+这里是直接转发给后端应用服务器了，也可以是一个静态首页  
+第一个必选规则  
+location = / {  
+    proxy_pass http://tomcat:8080/index  
+}  
+第二个必选规则是处理静态文件请求，这是nginx作为http服务器的强项  
+有两种配置模式，目录匹配或后缀匹配,任选其一或搭配使用  
+location ^~ /static/ {  
+    root /webroot/static/;  
+}  
+location ~* \.(gif|jpg|jpeg|png|css|js|ico)$ {  
+    root /webroot/res/;  
+}  
+第三个规则就是通用规则，用来转发动态请求到后端应用服务器  
+非静态文件请求就默认是动态请求，自己根据实际把握  
+毕竟目前的一些框架的流行，带.php,.jsp后缀的情况很少了  
+location / {  
+    proxy_pass http://tomcat:8080/  
 }
 
 ## ReWrite语法
-last – 基本上都用这个Flag。
-break – 中止Rewirte，不在继续匹配
-redirect – 返回临时重定向的HTTP状态302
-permanent – 返回永久重定向的HTTP状态301
-1、下面是可以用来判断的表达式：
--f和!-f用来判断是否存在文件
--d和!-d用来判断是否存在目录
--e和!-e用来判断是否存在文件或目录
--x和!-x用来判断文件是否可执行
-2、下面是可以用作判断的全局变量
-例：http://localhost:88/test1/test2/test.php
-$host：localhost
-$server_port：88
-$request_uri：http://localhost:88/test1/test2/test.php
-$document_uri：/test1/test2/test.php
-$document_root：D:\nginx/html
-$request_filename：D:\nginx/html/test1/test2/test.php
 
-server {
-  listen 80;
-  server_name start.igrow.cn;
-  index index.html index.php;
-  root html;
-  if ($http_host !~ “^star\.igrow\.cn$&quot {
-    rewrite ^(.*) http://star.igrow.cn$1 redirect;
-  }
-}
+last – 基本上都用这个Flag。  
+break – 中止Rewirte，不在继续匹配  
+redirect – 返回临时重定向的HTTP状态302  
+permanent – 返回永久重定向的HTTP状态301  
+
+1、下面是可以用来判断的表达式：  
+
+-f和!-f用来判断是否存在文件  
+
+-d和!-d用来判断是否存在目录  
+
+-e和!-e用来判断是否存在文件或目录  
+
+-x和!-x用来判断文件是否可执行  
+
+2、下面是可以用作判断的全局变量  
+
+例：http://localhost:88/test1/test2/test.php  
+
+$host：localhost  
+
+$server_port：88  
+
+$request_uri：http://localhost:88/test1/test2/test.php  
+
+$document_uri：/test1/test2/test.php  
+
+$document_root：D:\nginx/html  
+
+$request_filename：D:\nginx/html/test1/test2/test.php  
+
+server {  
+
+  listen 80;  
+  
+  server_name start.igrow.cn;  
+  
+  index index.html index.php;  
+  root html;  
+  if ($http_host !~ “^star\.igrow\.cn$&quot {  
+    rewrite ^(.*) http://star.igrow.cn$1 redirect;  
+  }  
+}  
 
 ## 防盗链
 
-location ~* \.(gif|jpg|swf)$ {
-  valid_referers none blocked start.igrow.cn sta.igrow.cn;
-  if ($invalid_referer) {
-    rewrite ^/ http://$host/logo.png;
-  }
-}
+location ~* \.(gif|jpg|swf)$ {  
+  valid_referers none blocked start.igrow.cn sta.igrow.cn;  
+  if ($invalid_referer) {  
+    rewrite ^/ http://$host/logo.png;  
+  }  
+}  
 
 ## 根据文件类型设置过期时间
 
-location ~* \.(js|css|jpg|jpeg|gif|png|swf)$ {
-  if (-f $request_filename) {
-    expires 1h;
-    break;
-  }
-}
-## 禁止访问某个目录
+location ~* \.(js|css|jpg|jpeg|gif|png|swf)$ {  
+  if (-f $request_filename) {  
+    expires 1h;  
+    break;  
+  }  
+}  
 
-location ~* \.(txt|doc)${
-  root /data/www/wwwroot/linuxtone/test;
-  deny all;
-}
+## 禁止访问某个目录  
+
+location ~* \.(txt|doc)${  
+  root /data/www/wwwroot/linuxtone/test;  
+  deny all;  
+}  
 
 ## 一些可用的全局变量:
 
-$args
-$content_length
-$content_type
-$document_root
-$document_uri
-$host
-$http_user_agent
-$http_cookie
-$limit_rate
-$request_body_file
-$request_method
-$remote_addr
-$remote_port
-$remote_user
-$request_filename
-$request_uri
-$query_string
-$scheme
-$server_protocol
-$server_addr
-$server_name
-$server_port
-$uri
+$args  
+$content_length  
+$content_type  
+$document_root  
+$document_uri  
+$host  
+$http_user_agent  
+$http_cookie  
+$limit_rate  
+$request_body_file  
+$request_method  
+$remote_addr  
+$remote_port  
+$remote_user  
+$request_filename  
+$request_uri  
+$query_string  
+$scheme  
+$server_protocol  
+$server_addr  
+$server_name  
+$server_port  
+$uri  
