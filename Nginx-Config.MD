@@ -20,8 +20,6 @@ location [=|~|~*|^~] /uri/ { … }
 
 ~*  开头表示不区分大小写的正则匹配  
 
-!~和!~*分别为区分大小写不匹配及不区分大小写不匹配 的正则  
-
 / 通用匹配，任何请求都会匹配到  
 
 多个location配置的情况下匹配顺序为（参考资料而来，还未实际验证，试试就知道了，不必拘泥，仅供参考）:  
@@ -42,11 +40,8 @@ location ~ \.(gif|jpg|png|js|css)$ { 规则D }
 
 location ~* \.png$ {  规则E  }
 
-location !~ \.xhtml$ { 规则F }
 
-location !~* \.xhtml$ { 规则G }
-
-location / { 规则H }
+location / { 规则F }
 
 那么产生的效果如下：  
 
@@ -60,9 +55,7 @@ location / { 规则H }
 
 访问 http://localhost/a.PNG 则匹配规则E，而不会匹配规则D，因为规则E不区分大小写。  
 
-访问 http://localhost/a.xhtml 不会匹配规则F和规则G，http://localhost/a.XHTML不会匹配规则G，因为不区分大小写。规则F，规则G属于排除法，符合匹配规则但是不会匹配到，所以想想看实际应用中哪里会用到。  
-
-访问 http://localhost/category/id/1111则最终匹配到规则H，因为以上规则都不匹配，这个时候应该是nginx转发请求给后端应用服务器，比如FastCGI（php），tomcat（jsp），nginx作为方向代理服务器存在。  
+访问 http://localhost/category/id/1111则最终匹配到规则F，因为以上规则都不匹配，这个时候应该是nginx转发请求给后端应用服务器，比如FastCGI（php），tomcat（jsp），nginx作为方向代理服务器存在。  
 
 所以实际使用中，个人觉得至少有三个匹配规则定义，如下：
 
