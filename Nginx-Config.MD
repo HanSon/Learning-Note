@@ -128,7 +128,7 @@ $request_filename：D:\nginx/html/test1/test2/test.php
 ## 防盗链
 
 <pre><code>location ~* \.(gif|jpg|swf)$ {  
-  &emsp;valid_referers none blocked start.igrow.cn sta.igrow.cn;  
+  &emsp;valid_referers none blocked *.hanc.cc;  
   &emsp;if ($invalid_referer) {  
     &emsp;&emsp;rewrite ^/ http://$host/logo.png;  
   &emsp;}  
