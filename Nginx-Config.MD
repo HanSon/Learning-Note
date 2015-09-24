@@ -1,8 +1,8 @@
 # Nginx 配置
 
 * [语法规则](#语法规则)
-* [location例子](#location例子) 
-* [ReWrite 语法](#ReWrite语法) 
+* [location例子](#location例子)
+* [ReWrite语法](#ReWrite语法)
 * [防盗链](#防盗链)
 * [根据文件类型设置过期时间](#根据文件类型设置过期时间)
 * [禁止访问某个目录](#禁止访问某个目录)
