@@ -1,0 +1,20 @@
+{
+    "name": "hanson/digger",
+    "description": "A web crawler framework",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "HanSon",
+            "email": "h@hanc.cc"
+        }
+    ],
+    "require": {
+        "illuminate/support": "^5.4",
+        "guzzlehttp/guzzle": "^6.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hanson\\Digger\\": "src/"
+        }
+    }
+}
